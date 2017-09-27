@@ -4,7 +4,7 @@
 clear; close all; clc;
 
 %% open simulink model
-open_system('./symodel');
+open_system('./model/symodel');
 
 %% set constants
 c = 3e8;
