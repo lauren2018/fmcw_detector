@@ -8,6 +8,6 @@ function solution = pnoise_fit(perin,freq,params)
 %         'MaxFunctionEvaluations', 400,'MaxIterations',400);    
 %     lb = [];
 %     ub = [];
-    solution = fminsearchbnd(datafun, params, [0 1e-10 0], [length(freq) Inf Inf], options);
+    solution = fminsearchbnd(datafun, params, [0 1e-12 0], [length(freq) Inf Inf], options);
 %     solution = lsqcurvefit(@pnoise_model, params, freq, perin, [0 0 0], [], options);
 end
