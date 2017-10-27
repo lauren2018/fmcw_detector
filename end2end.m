@@ -44,13 +44,13 @@ prx=1/sqrt(2);
 
 N = round(realstop/timestep);
 
-fnoise_list = 10.^(6:0.1:7); %%%%%%%
+% fnoise_list = 10.^(6:0.1:7); %%%%%%%
 % fnoise_list = [5e5 1e6 5e6];
-% fnoise_list = 1e6;
+fnoise_list = 1e6;
 % Prx = 1e-3;
 % Prx = [10^-9 10^-10 10^-11];
-Prx = 10.^(-11:0.2:-8);
-% Prx = 10^-10.6;
+% Prx = 10.^(-11:0.2:-8);
+Prx = 10^-10.6;
 % Prx = 1e-9;
 % Prx = 10.^(-11.5:0.5:);
 % Prx = 10^-3;

@@ -59,20 +59,19 @@ SNR = 20*log10(norm(y)/norm(z));
 
 delta_noise = sqrt(n + sqrt(2*n))*sigma; % good approximation of norm(z)
 
-
 %%
 % Solve SDP
 f_rec_roots = superres_sdp_solver(y, delta_noise, length(y));
 f_rec_roots = f_rec_roots(f_rec_roots<0.5);
 
-f_periodogram = periodogram(y, [], 2048, 1);
-frange = 0:1/2048:0.5;
+f_periodogram = periodogram(y, [], length(y), 1);
+frange = 0:1/length(y):0.5;
 [Y,I]=max(f_periodogram);
 f_est_periodogram = frange(I);
 
-[S,w] = pmusic(y,2,2048);
+[S,w] = pmusic(y,6,frange,1);
 [Y,I] = max(S);
-f_est_music = w(I)/(2*pi);
+f_est_music = w(I);
 
 
 %%

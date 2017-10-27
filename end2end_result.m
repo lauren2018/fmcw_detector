@@ -27,8 +27,8 @@ colormap(fig1handle,cm_viridis);
 
 
 subhandle1 = subplot(1,3,1);
-res = load('result_fig4a_new_2.mat');
-std_est_periodogram_lse = res.std_est_periodogram_lse(2:end,:);
+res = load('result_fig4a_new.mat');
+std_est_periodogram_lse = res.std_est_periodogram_lse;
 
 mincolor = 0; maxcolor = 6;
 
@@ -61,7 +61,7 @@ title('150m, 1GHz','fontweight','normal');
 set(gca,'ticklength',[0 0]);
 
 subhandle3 = subplot(1,3,3);
-res = load('result_fig4b_new_2.mat');
+res = load('result_fig4b_new.mat');
 std_est_periodogram_lse = res.std_est_periodogram_lse;
 
 hm3 = heatmapcus(flipud(single(std_est_periodogram_lse*100)),fnoise_list,[], [],...
