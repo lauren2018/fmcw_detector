@@ -25,13 +25,13 @@ open_system('./model/symodel_simple');
 q = 1.6e-19;
 Res = 1;
 c = 3e8;
-timestep = 0.2e-9;
+timestep = 1e-9;
 
-chirpbw = 10e9; %%%%%%%
-realstop = 10*1e-6;
+chirpbw = 5e9; %%%%%%%
+realstop = 100*1e-6;
 alpha = chirpbw/realstop;
 
-distance = 75;
+distance = 300;
 tau = 2*distance/c;
 buffer = 14336;
                                                                                 
@@ -44,23 +44,23 @@ prx=1/sqrt(2);
 
 N = round(realstop/timestep);
 
-fnoise_list = 10.^(6:0.1:7); %%%%%%%
+% fnoise_list = 10.^(6:0.1:7); %%%%%%%
 % fnoise_list = [5e5 1e6 5e6];
-% fnoise_list = 1e6;
+fnoise_list = 100e3;
 % Prx = 1e-3;
 % Prx = [10^-9 10^-10 10^-11];
-Prx = 10.^(-11:0.2:-8);
+% Prx = 10.^(-11:0.2:-8);
 % Prx = 10^-10.6;
 % Prx = 1e-9;
 % Prx = 10.^(-11.5:0.5:);
-% Prx = 10^-3;
+Prx = 10^-3;
 % [10^-10 10^-9 10^-8];
 snoise_list = q/Res./Prx;
 
 
 %% run simulation
 
-iter = 50;
+iter = 1;
 
 periods = (1./(tau*alpha))/timestep;
 rightlength = floor(periods.*floor(N./periods));
@@ -160,7 +160,7 @@ for k=1:length(Prx)
     end
 end
 
-hm=heatmap((fnoise_list), fliplr(Prx),flipud(single(std_est_periodogram_lse*100)));
-colormap(hm,cm_magma);
-caxis([0 20]);
+% hm=heatmap((fnoise_list), fliplr(Prx),flipud(single(std_est_periodogram_lse*100)));
+% colormap(hm,cm_magma);
+% caxis([0 20]);
 

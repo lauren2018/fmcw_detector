@@ -38,9 +38,9 @@ prx=1/sqrt(2);
 
 N = round(stoptime/timestep);
 freq = 0:Fs/N:Fs/2;
-fnoise = 25e6; %%%%%%%
+fnoise = 1e5; %%%%%%%
 tauc=1/(pi*fnoise);
-dc = (c/(4*pi*fnoise))*log(stoptime*pi*fnoise);
+dc = (c/(4*pi*fnoise))*log(stoptime* sssssssss pi*fnoise);
 % Prx = 10.^(-11:0.2:-9);
 % Prx = 0.316227766016840e-9;
 % Prx = [10^-3 10^-9];
@@ -61,7 +61,7 @@ padm = 0;
 % distance=100;
 % distance = 10.1:10:100.1;
 % distance = [11 22 33 44 55 66 77 88 99 110];
-distance = 120;
+distance = 150;
 
 dist_res = 0.5*c/chirpbw;
 % distance = [3 4];
@@ -159,54 +159,54 @@ end
     
 %% plot the periodogram-estmated psd for 
 
-fig1handle=fig('units','inches','width',textwidth/2,'height',textwidth/4,'font','Times','fontsize',fs);
-set(gcf,'DefaultAxesColorOrder',colororder);
-
-subhandle1 = subplot(1,2,1);
-hold on;
-plot(distance,std_est_periodogram_lse(1,:),'o-','linewidth',lw,'markerfacecolor',cb,'markersize',ms);
-plot(distance,std_est_rb(1,:),'^-','linewidth',lw,'markerfacecolor',cy,'markersize',ms);
-plot(distance,std_est_music(1,:),'+-','linewidth',lw,'markerfacecolor',cg,'markersize',ms);
-box off;
-xlabel('Distance (m)');
-ylabel('Estimation variance (m)');
-
-% lbl = {'LLSE','R&B','MUSIC'};
-% legendflex(lbl,'anchor',{'nw','nw'},'buffer',[0.2 0],'box','off','xscale',0.5);
-
-set(gca,'linewidth',lw);
-set(gca,'yminortick','off');
-set(gca,'ticklength',[0.02 0.02]);
-axis([0 100 0 1]);
-xticks([0 50 100]);
-yticks([0 0.5 1]);
-
-solution_lse_end = mlelorentz(squeeze(percollection(1,end,:)),F,[N/4 tauc, snoise]);
-
-subhandle2 = subplot(1,2,2);
-hold on;
-plot(F/1e9,10*log10(squeeze(percollection(1,1,:))),'-','linewidth',lw,'markerfacecolor',cb,'markersize',ms);
-plot(F/1e9,10*log10(squeeze(percollection(1,end,:))),'-','linewidth',lw,'markerfacecolor',cb,'markersize',ms);
-% plot(F/1e9,10*log10(pnoise_model(solution_lse,F)),'-','color',ck,'linewidth',lw,'markerfacecolor',cb,'markersize',ms);
-plot(F/1e9,10*log10(pnoise_model(solution_lse_end,F)),'-','color',ck,'linewidth',lw,'markerfacecolor',cb,'markersize',ms);
-box off;
-xlabel('Frequency (GHz)');
-ylabel('Power Density (dB/Hz)');
-
-% lbl = {'10m','100m'};
-% legendflex(lbl,'anchor',{'n','n'},'buffer',[-0.1 0],'bufferunit','inches','box','off','xscale',0.5);
-
-set(gca,'linewidth',lw);
-set(gca,'yminortick','off');
-set(gca,'ticklength',[0.02 0.02]);
-axis([0 1 -120 -50]);
-xticks([0 0.5 1]);
-yticks([-100 -50]);
-
-h1=get(subhandle1,'Position');
-set(subhandle1,'Position',[h1(1)-0.05 h1(2)+0.02 h1(3)+0.045 h1(4)]);
-h2=get(subhandle2,'Position');
-set(subhandle2,'Position',[h2(1)+0.01 h2(2)+0.02 h2(3)+0.045 h2(4)]);
+% fig1handle=fig('units','inches','width',textwidth/2,'height',textwidth/4,'font','Times','fontsize',fs);
+% set(gcf,'DefaultAxesColorOrder',colororder);
+% 
+% subhandle1 = subplot(1,2,1);
+% hold on;
+% plot(distance,std_est_periodogram_lse(1,:),'o-','linewidth',lw,'markerfacecolor',cb,'markersize',ms);
+% plot(distance,std_est_rb(1,:),'^-','linewidth',lw,'markerfacecolor',cy,'markersize',ms);
+% plot(distance,std_est_music(1,:),'+-','linewidth',lw,'markerfacecolor',cg,'markersize',ms);
+% box off;
+% xlabel('Distance (m)');
+% ylabel('Estimation variance (m)');
+% 
+% % lbl = {'LLSE','R&B','MUSIC'};
+% % legendflex(lbl,'anchor',{'nw','nw'},'buffer',[0.2 0],'box','off','xscale',0.5);
+% 
+% set(gca,'linewidth',lw);
+% set(gca,'yminortick','off');
+% set(gca,'ticklength',[0.02 0.02]);
+% axis([0 100 0 1]);
+% xticks([0 50 100]);
+% yticks([0 0.5 1]);
+% 
+% solution_lse_end = mlelorentz(squeeze(percollection(1,end,:)),F,[N/4 tauc, snoise]);
+% 
+% subhandle2 = subplot(1,2,2);
+% hold on;
+% plot(F/1e9,10*log10(squeeze(percollection(1,1,:))),'-','linewidth',lw,'markerfacecolor',cb,'markersize',ms);
+% plot(F/1e9,10*log10(squeeze(percollection(1,end,:))),'-','linewidth',lw,'markerfacecolor',cb,'markersize',ms);
+% % plot(F/1e9,10*log10(pnoise_model(solution_lse,F)),'-','color',ck,'linewidth',lw,'markerfacecolor',cb,'markersize',ms);
+% plot(F/1e9,10*log10(pnoise_model(solution_lse_end,F)),'-','color',ck,'linewidth',lw,'markerfacecolor',cb,'markersize',ms);
+% box off;
+% xlabel('Frequency (GHz)');
+% ylabel('Power Density (dB/Hz)');
+% 
+% % lbl = {'10m','100m'};
+% % legendflex(lbl,'anchor',{'n','n'},'buffer',[-0.1 0],'bufferunit','inches','box','off','xscale',0.5);
+% 
+% set(gca,'linewidth',lw);
+% set(gca,'yminortick','off');
+% set(gca,'ticklength',[0.02 0.02]);
+% axis([0 1 -120 -50]);
+% xticks([0 0.5 1]);
+% yticks([-100 -50]);
+% 
+% h1=get(subhandle1,'Position');
+% set(subhandle1,'Position',[h1(1)-0.05 h1(2)+0.02 h1(3)+0.045 h1(4)]);
+% h2=get(subhandle2,'Position');
+% set(subhandle2,'Position',[h2(1)+0.01 h2(2)+0.02 h2(3)+0.045 h2(4)]);
 % set(subhandle2,'Position',[h2(1)+0.05 h2 h2(3) h2(4)]);
 
 % save2pdf('fig3c.pdf',fig1handle,600);

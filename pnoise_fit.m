@@ -1,6 +1,6 @@
-function solution = pnoise_fit(perin,freq,params)
+function solution = pnoise_fit(perin,freq,fnoise,snoise,params)
     
-    datafun = @(params) sum((perin - pnoise_model(params, freq)).^2);
+    datafun = @(params) sum((perin - pnoise_model(fnoise, snoise,params, freq)).^2);
     options = optimset ('MaxFunEvals', 10000, 'MaxIter', 10000, 'TolFun', 1e-9);
 %     options = optimoptions('lsqcurvefit','Algorithm','levenberg-marquardt');
         
@@ -8,6 +8,6 @@ function solution = pnoise_fit(perin,freq,params)
 %         'MaxFunctionEvaluations', 400,'MaxIterations',400);    
 %     lb = [];
 %     ub = [];
-    solution = fminsearchbnd(datafun, params, [0 1e-12 0], [length(freq) Inf Inf], options);
+    solution = fminsearchbnd(datafun, params, [0 0], [length(freq) Inf], options);
 %     solution = lsqcurvefit(@pnoise_model, params, freq, perin, [0 0 0], [], options);
 end
