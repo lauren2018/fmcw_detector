@@ -13,17 +13,17 @@ open_system('./model/symodel_simple');
 
 %% set constants
 q = 1.6e-19;
-Res = 1;
+Res = 0.9;
 c = 3e8;
 timestep = 1e-9;
 
-chirpbw = 10e9; %%%%%%%
-realstop = 100*1e-6;
+chirpbw = 5.33e9; %%%%%%%
+realstop = 25*1e-6;
 alpha = chirpbw/realstop;
 
-distance = 200;
+distance = 110;
 tau = 2*distance/c;
-buffer = 14336;
+buffer = 5000;
                                                                                 
 stoptime = realstop + tau; %%%%%%%
 
@@ -34,20 +34,20 @@ prx=1/sqrt(2);
 
 N = round(realstop/timestep);
 
-% fnoise_list = 10.^(6:0.1:7); %%%%%%%
+% fnoise_list = 10.^(6:0.2:7); %%%%%%%
 % fnoise_list = [5e5 1e6 5e6];
-fnoise_list = 1e6;
+fnoise_list = 7e6;
 % Prx = 1e-3;
 % Prx = [10^-9 10^-10 10^-11];
 % Prx = 10.^(-11:0.2:-8);
 % Prx = 10^-10.6;
-% Prx = 1e-9;
-% Prx = 10.^(-11.5:0.5:);
+Prx_list = 0.1e-9;
+% Prx_list = 10.^(-11:0.5:-8);
 Plo = 10e-3;
-Prx = 1e-9;
+% Prx = 1e-9;
 % [10^-10 10^-9 10^-8];
 % snoise_list = q/Res./Prx;
-snoise_list = 2*q*Res*Plo;
+snoise = 2*q*Res*Plo;
 
 
 %% run simulation
@@ -59,35 +59,36 @@ rightlength = floor(periods.*floor(N./periods));
 
 x_windowed = zeros(length(fnoise_list), iter, N);
 signal_est_periodogram = zeros(length(fnoise_list), iter);
-dist_est_periodogram = zeros(length(Prx),length(fnoise_list), iter);
-dist_est_periodogram_lse = zeros(length(Prx),length(fnoise_list), iter);
-dist_est_rb = zeros(length(Prx),length(fnoise_list), iter);
+dist_est_periodogram = zeros(length(Prx_list),length(fnoise_list), iter);
+dist_est_periodogram_lse = zeros(length(Prx_list),length(fnoise_list), iter);
+dist_est_rb = zeros(length(Prx_list),length(fnoise_list), iter);
 
-std_est_periodogram = zeros(length(Prx),length(fnoise_list));
-std_est_periodogram_lse = zeros(length(Prx),length(fnoise_list));
-std_est_rb = zeros(length(Prx),length(fnoise_list));
-max_est_periodogram = zeros(length(Prx),length(fnoise_list));
+std_est_periodogram = zeros(length(Prx_list),length(fnoise_list));
+std_est_periodogram_lse = zeros(length(Prx_list),length(fnoise_list));
+std_est_rb = zeros(length(Prx_list),length(fnoise_list));
+max_est_periodogram = zeros(length(Prx_list),length(fnoise_list));
 
-percollection = zeros(length(Prx),length(fnoise_list),iter,N/2+1);
-solution_lse_collection = zeros(length(Prx),length(fnoise_list),iter,2);
+percollection = zeros(length(Prx_list),length(fnoise_list),iter,N/2+1);
+solution_lse_collection = zeros(length(Prx_list),length(fnoise_list),iter,2);
 
-tolerance = 1;
+tolerance = 20;
 
 rng(510);
 A = randi(10000,2,iter);
 
-for k=1:length(Prx)
+for k=1:length(Prx_list)
     for j=1:length(fnoise_list)
         i = 1;
         fail_flag = 0;
         
+        Prx = Prx_list(k);
         fnoise = fnoise_list(j);
         tauc=1./(pi*fnoise);
         dc = (c/(4*pi*fnoise))*log(realstop*pi*fnoise);
         
         while (i <= iter && fail_flag == 0)
             
-            snoise = snoise_list(k);
+%             snoise = snoise_list;
             fseed = A(1,i);
             sseed = A(2,i);
             
@@ -134,9 +135,9 @@ for k=1:length(Prx)
                 end
                 
             end
-            i = i + 1;
             percollection(k,j,i,:) = per;
             solution_lse_collection(k,j,i,:) = solution_lse;
+            i = i + 1;
         end
         
         fprintf('Just finished iteration #%d-%d, fail_flag: %d, ', k,j,fail_flag);
@@ -155,22 +156,154 @@ for k=1:length(Prx)
         fprintf('rb: %.2f cm\n',single(std_est_rb(k,j)*100));
     end
 end
+hold on
+plot(F/1e6,30+10*log10(squeeze(percollection(1,1,1,:))),'color',cb);
+plot(F/1e6,30+10*log10(squeeze(mean(percollection(1,1,:,:),3))),'color',co);
 
-figure(1);
+
+
+
+close all;
+fig1handle=fig('units','inches','width',2*textwidth,'height',textwidth*0.4,'font','Times','fontsize',2*fs);
+colormap(fig1handle,cm_viridis);
+subhandle1=subplot(1,3,1);
 set(gcf,'DefaultAxesColorOrder',colororder);
 hold on
-plot(F/1e6,30+10*log10(per));
-plot(F/1e6,30+10*log10(squeeze(mean(percollection,3))));
-plot(F/1e6,30+pnoise_model(fnoise,snoise,solution_lse,F));
+plot(F/1e6,30+10*log10(squeeze(percollection(1,1,1,:))),'color',cb);
+plot(F/1e6,30+10*log10(squeeze(mean(percollection(1,1,:,:),3))),'color',co);
+% plot(F/1e6,30+pnoise_model(fnoise,snoise,squeeze(solution_lse_collection(:,:,10,:)),F),'color',cg,'linewidth',2);
 % plot(F,pnoise_model(fnoise,snoise,[solution_lse(1) 2*Res^2*Plo*Prx*2*pi*fnoise],F));
-
+set(gca,'linewidth',1.5*lw);
+% set(gca,'yminortick','off');
+set(gca,'ticklength',[0.02 0.02]);
 xlabel('Frequency (MHz)');
-ylabel('Power Density (dBm/Hz)');
-legend('Single trial','Averaged (50 trials)','Fitted');
+ylabel('PSD (dBm/Hz)');
+% legend('Single trial','Averaged (50 trials)');
+legendstring={'Single trial','Averaged (50 trials)'};
+legendflex(legendstring,'anchor',{'ne','ne'},'buffer',[0 0],'bufferunit','inches','box','off','xscale',1);
 legend boxoff;
 box off;
 xlim([0 500]);
-ylim([-200 -120]);
+ylim([-220 -100]);
+
+subhandle2=subplot(1,3,2);
+set(gcf,'DefaultAxesColorOrder',colororder);
+edges=(198:0.1:202);
+hold on
+histogram(dist_est_periodogram_lse(1,1,:),edges,'facecolor',cb);
+histogram(dist_est_periodogram(1,1,:),edges,'facecolor',co);
+set(gca,'linewidth',1.5*lw);
+set(gca,'yminortick','off');
+set(gca,'ticklength',[0.02 0.02]);
+xlabel('Distance (m)');
+ylabel('Count');
+legendstring={'L-LSE','MF'};
+% legendflex(legendstring,'anchor',{'ne','ne'},'buffer',[0 0],'bufferunit','inches','box','off','xscale',0.5);
+legend(legendstring);
+legend boxoff;
+box off;
+xlim([198 202]);
+ylim([0 30]);
+
+temp=load('cleo_fig1_heatmap.mat');
+std_est_periodogram_lse=std(temp.dist_est_periodogram_lse,[],3);
+
+subhandle3 = subplot(1,3,3);
+mincolor = 0; maxcolor = 15;
+Prx = {'10^{-11}' '' '10^{-10}' '' '10^{-9}' '' '10^{-8}'};
+fnoise_list = {'10^{0}' '' '' '' '' '10^{1}'};
+hm1 = heatmapcus(flipud(single(std_est_periodogram_lse*100)),fnoise_list,fliplr(Prx), [],...
+        'ShowAllTicks', true,'TickTexInterpreter','true',...
+        'MinColorValue', mincolor, 'MaxColorValue', maxcolor,'GridLines','-');
+set(gca,'ticklength',[0 0]);
+colorbar;
+xlabel('Linewidth (MHz)')
+ylabel('RX Power (W)')
+
+h1=get(subhandle1,'Position');
+h2=get(subhandle2,'Position');
+h3=get(subhandle3,'Position');
+
+plotx1 = h1(1)-0.05;
+ploty1 = h1(2)+0.05;
+
+plotwidth1 = h1(3)*1.15;
+plotheight1 = h1(4)*0.95;
+% plotpitch = plotwidth + 0.025;
+
+
+plotx2 = h2(1);
+ploty2 = h2(2)+0.05;
+
+plotwidth2 = h2(3)*1.15;
+plotheight2 = h2(4)*0.95;
+% plotpitch = plotwidth + 0.025;
+
+
+plotx3 = h3(1)+0.05;
+ploty3 = h3(2)+0.05;
+
+plotwidth3 = h3(3)*1.05;
+plotheight3 = h3(4)*0.95;
+% plotpitch = plotwidth + 0.025;
+
+set(subhandle1,'Position',[plotx1 ploty1 plotwidth1 plotheight1]);
+set(subhandle2,'Position',[plotx2 ploty2 plotwidth2 plotheight2]);
+set(subhandle3,'Position',[plotx3 ploty3 plotwidth3 plotheight3]);
+
+pos = [3.2 0.3];
+str = 'Accuracy (cm)';
+t=text(subhandle3,pos(1),pos(2), str,'fontname','times',...
+    'fontsize',2*fs,'units','inches','rotation',90);
+
+boxw = 0.1;
+boxh = 0.1;
+dim = [0.02 0.01 boxw boxh];
+str = {'(a)'};
+annotation(...
+    'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
+    'fontsize',2*fs,'horizontalalignment','left','Color',ck,...
+    'verticalalignment','middle','linestyle','none');
+
+boxw = 0.1;
+boxh = 0.1;
+dim = [0.35 0.01 boxw boxh];
+str = {'(b)'};
+annotation(...
+    'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
+    'fontsize',2*fs,'horizontalalignment','left','Color',ck,...
+    'verticalalignment','middle','linestyle','none');
+
+boxw = 0.1;
+boxh = 0.1;
+dim = [0.68 0.01 boxw boxh];
+str = {'(c)'};
+annotation(...
+    'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
+    'fontsize',2*fs,'horizontalalignment','left','Color',ck,...
+    'verticalalignment','middle','linestyle','none');
+
+
+boxw = 0.1;
+boxh = 0.25;
+dim = [0.42 0.6 boxw boxh];
+str = {'$\sigma_{LLSE}$=3.56cm'};
+annotation(...
+    'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
+    'fontsize',1.5*fs,'horizontalalignment','center','Color',ck,...
+    'verticalalignment','middle','linestyle','none','Interpreter','latex');
+
+dim = [0.42 0.5 boxw boxh];
+str = {'$\sigma_{MF}$=37.9cm'};
+annotation(...
+    'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
+    'fontsize',1.5*fs,'horizontalalignment','center','Color',ck,...
+    'verticalalignment','middle','linestyle','none','Interpreter','latex');
+
+
+
+
+save2pdf('./cleo2018/fig1.pdf',fig1handle,600);
 
 %%
 % sample = load(datapathname);

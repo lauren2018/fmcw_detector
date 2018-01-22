@@ -17,8 +17,8 @@ Res = 1;
 c = 3e8;
 timestep = 1e-9;
 
-chirpbw = 15e9; %%%%%%%
-realstop = 25*1e-6;
+chirpbw = 5e9; %%%%%%%
+realstop = 50*1e-6;
 alpha = chirpbw/realstop;
 
 distance = 110;
@@ -36,7 +36,7 @@ N = round(realstop/timestep);
 
 % fnoise_list = 10.^(6:0.2:7); %%%%%%%
 % fnoise_list = [5e5 1e6 5e6];
-fnoise_list = 7e6;
+fnoise_list = 1e6;
 % Prx = 1e-3;
 % Prx = [10^-9 10^-10 10^-11];
 % Prx = 10.^(-11:0.2:-8);
@@ -156,7 +156,7 @@ for k=1:length(Prx_list)
         fprintf('rb: %.2f cm\n',single(std_est_rb(k,j)*100));
     end
 end
-
+% 
 % close all;
 % fig1handle=fig('units','inches','width',2*textwidth,'height',textwidth*0.5,'font','Times','fontsize',2*fs);
 % colormap(fig1handle,cm_viridis);

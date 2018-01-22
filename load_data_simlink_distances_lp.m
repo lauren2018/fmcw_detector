@@ -9,7 +9,7 @@ c = 3e8;
 % addpath(datapathname);
 
 %% open simlink model
-open_system('./model/symodel_simple');
+open_system('./model/symodel_simple_lp');
 
 %% set constants
 q = 1.6e-19;
@@ -18,10 +18,10 @@ c = 3e8;
 timestep = 1e-9;
 
 chirpbw = 15e9; %%%%%%%
-realstop = 25*1e-6;
+realstop = 100*1e-6;
 alpha = chirpbw/realstop;
 
-distance = 110;
+distance = 200;
 tau = 2*distance/c;
 buffer = 5000;
                                                                                 
@@ -36,7 +36,7 @@ N = round(realstop/timestep);
 
 % fnoise_list = 10.^(6:0.2:7); %%%%%%%
 % fnoise_list = [5e5 1e6 5e6];
-fnoise_list = 7e6;
+fnoise_list = 1e6;
 % Prx = 1e-3;
 % Prx = [10^-9 10^-10 10^-11];
 % Prx = 10.^(-11:0.2:-8);
@@ -69,6 +69,7 @@ std_est_rb = zeros(length(Prx_list),length(fnoise_list));
 max_est_periodogram = zeros(length(Prx_list),length(fnoise_list));
 
 percollection = zeros(length(Prx_list),length(fnoise_list),iter,N/2+1);
+percollection_lp = zeros(length(Prx_list),length(fnoise_list),iter,N/2+1);
 solution_lse_collection = zeros(length(Prx_list),length(fnoise_list),iter,2);
 
 tolerance = 20;
@@ -98,15 +99,24 @@ for k=1:length(Prx_list)
             
             while (outlier_flag == 1)
                                 
-                sim('symodel_simple');
-                measdata = squeeze(vout15.Data);
+                sim('symodel_simple_lp');
+                measdata_lp = squeeze(vout15.Data);
+                measdata = squeeze(vout2.Data);
+%                 noise_out = squeeze(vout.Data);
+%                 lp_out = squeeze(vout12.Data);
                 measdata = measdata(end-N:end-N+rightlength-1);
+                measdata_lp = measdata_lp(end-N:end-N+rightlength-1);
                 
                 x_windowed(j,i,:)= cat(2,measdata',zeros(1,N-length(measdata)));
+                x_windowed_lp(j,i,:)= cat(2,measdata_lp',zeros(1,N-length(measdata_lp)));
 
 %                     zeros(round(4*N/5)-rightlength,1)
                 tempx_windowed = squeeze(x_windowed(j,i,:));
+                tempx_windowed_lp = squeeze(x_windowed_lp(j,i,:));
+%                 [per_noise,Fn] = periodogram(noise_out,[],'onesided',length(noise_out),Fs);
+%                 [per_lp,Fn] = periodogram(lp_out,[],'onesided',length(lp_out),Fs);
 
+                [per_lp,F] = periodogram(tempx_windowed_lp,window(@rectwin,length(tempx_windowed_lp)),length(tempx_windowed_lp),Fs);
                 [per,F] = periodogram(tempx_windowed,window(@rectwin,length(tempx_windowed)),length(tempx_windowed),Fs);
 
                 [Y, I] = max(per);
@@ -136,6 +146,7 @@ for k=1:length(Prx_list)
                 
             end
             percollection(k,j,i,:) = per;
+            percollection_lp(k,j,i,:) = per_lp;
             solution_lse_collection(k,j,i,:) = solution_lse;
             i = i + 1;
         end
@@ -156,6 +167,11 @@ for k=1:length(Prx_list)
         fprintf('rb: %.2f cm\n',single(std_est_rb(k,j)*100));
     end
 end
+
+figure();
+hold on;
+plot(F, 10*log10(squeeze(mean(percollection(1,1,:,:),3))));
+plot(F, 10*log10(squeeze(mean(percollection_lp(1,1,:,:),3))));
 
 % close all;
 % fig1handle=fig('units','inches','width',2*textwidth,'height',textwidth*0.5,'font','Times','fontsize',2*fs);

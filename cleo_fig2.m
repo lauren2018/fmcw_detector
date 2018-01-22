@@ -11,6 +11,9 @@ c = 3e8;
 %% open simlink model
 open_system('./model/symodel_simple');
 
+
+1.47
+
 %% set constants
 q = 1.6e-19;
 Res = 1;
@@ -18,10 +21,10 @@ c = 3e8;
 timestep = 1e-9;
 
 chirpbw = 15e9; %%%%%%%
-realstop = 25*1e-6;
+realstop = 100*1e-6;
 alpha = chirpbw/realstop;
 
-distance = 110;
+distance = 200;
 tau = 2*distance/c;
 buffer = 5000;
                                                                                 
@@ -34,15 +37,15 @@ prx=1/sqrt(2);
 
 N = round(realstop/timestep);
 
-% fnoise_list = 10.^(6:0.2:7); %%%%%%%
+fnoise_list = 10.^(6:0.2:7); %%%%%%%
 % fnoise_list = [5e5 1e6 5e6];
-fnoise_list = 7e6;
+% fnoise_list = 1e6;
 % Prx = 1e-3;
 % Prx = [10^-9 10^-10 10^-11];
 % Prx = 10.^(-11:0.2:-8);
 % Prx = 10^-10.6;
-Prx_list = 1e-3;
-% Prx_list = 10.^(-11:0.5:-8);
+% Prx = 1e-9;
+Prx_list = 10.^(-11:0.5:-8);
 Plo = 10e-3;
 % Prx = 1e-9;
 % [10^-10 10^-9 10^-8];
@@ -157,136 +160,136 @@ for k=1:length(Prx_list)
     end
 end
 
-% close all;
-% fig1handle=fig('units','inches','width',2*textwidth,'height',textwidth*0.5,'font','Times','fontsize',2*fs);
-% colormap(fig1handle,cm_viridis);
-% subhandle1=subplot(1,3,1);
-% set(gcf,'DefaultAxesColorOrder',colororder);
-% hold on
-% plot(F/1e6,30+10*log10(squeeze(percollection(5,1,1,:))),'color',cb);
-% plot(F/1e6,30+10*log10(squeeze(mean(percollection(5,1,:,:),3))),'color',co);
-% % plot(F/1e6,30+pnoise_model(fnoise,snoise,squeeze(solution_lse_collection(:,:,10,:)),F),'color',cg,'linewidth',2);
-% % plot(F,pnoise_model(fnoise,snoise,[solution_lse(1) 2*Res^2*Plo*Prx*2*pi*fnoise],F));
-% set(gca,'linewidth',1.5*lw);
-% % set(gca,'yminortick','off');
-% set(gca,'ticklength',[0.02 0.02]);
-% xlabel('Frequency (MHz)');
-% ylabel('Power Density (dBm/Hz)');
-% % legend('Single trial','Averaged (50 trials)');
-% legendstring={'Single trial','Averaged (50 trials)'};
-% legendflex(legendstring,'anchor',{'ne','ne'},'buffer',[0 0],'bufferunit','inches','box','off','xscale',1);
-% legend boxoff;
-% box off;
-% xlim([0 500]);
-% ylim([-220 -100]);
-% 
-% subhandle2=subplot(1,3,2);
-% set(gcf,'DefaultAxesColorOrder',colororder);
-% edges=(198:0.1:202);
-% hold on
-% histogram(dist_est_periodogram(1,1,:),edges,'facecolor',cb);
-% histogram(dist_est_periodogram_lse(1,1,:),edges,'facecolor',co);
-% set(gca,'linewidth',1.5*lw);
+close all;
+fig1handle=fig('units','inches','width',2*textwidth,'height',textwidth*0.5,'font','Times','fontsize',2*fs);
+colormap(fig1handle,cm_viridis);
+subhandle1=subplot(1,3,1);
+set(gcf,'DefaultAxesColorOrder',colororder);
+hold on
+plot(F/1e6,30+10*log10(squeeze(percollection(5,1,1,:))),'color',cb);
+plot(F/1e6,30+10*log10(squeeze(mean(percollection(5,1,:,:),3))),'color',co);
+% plot(F/1e6,30+pnoise_model(fnoise,snoise,squeeze(solution_lse_collection(:,:,10,:)),F),'color',cg,'linewidth',2);
+% plot(F,pnoise_model(fnoise,snoise,[solution_lse(1) 2*Res^2*Plo*Prx*2*pi*fnoise],F));
+set(gca,'linewidth',1.5*lw);
 % set(gca,'yminortick','off');
-% set(gca,'ticklength',[0.02 0.02]);
-% xlabel('Distance (m)');
-% ylabel('Count');
-% legendstring={'L-LSE','MF'};
-% % legendflex(legendstring,'anchor',{'ne','ne'},'buffer',[0 0],'bufferunit','inches','box','off','xscale',0.5);
-% legend(legendstring);
-% legend boxoff;
-% box off;
-% xlim([198 202]);
-% ylim([0 30]);
+set(gca,'ticklength',[0.02 0.02]);
+xlabel('Frequency (MHz)');
+ylabel('Power Density (dBm/Hz)');
+% legend('Single trial','Averaged (50 trials)');
+legendstring={'Single trial','Averaged (50 trials)'};
+legendflex(legendstring,'anchor',{'ne','ne'},'buffer',[0 0],'bufferunit','inches','box','off','xscale',1);
+legend boxoff;
+box off;
+xlim([0 500]);
+ylim([-220 -100]);
+
+subhandle2=subplot(1,3,2);
+set(gcf,'DefaultAxesColorOrder',colororder);
+edges=(198:0.1:202);
+hold on
+histogram(dist_est_periodogram(1,1,:),edges,'facecolor',cb);
+histogram(dist_est_periodogram_lse(1,1,:),edges,'facecolor',co);
+set(gca,'linewidth',1.5*lw);
+set(gca,'yminortick','off');
+set(gca,'ticklength',[0.02 0.02]);
+xlabel('Distance (m)');
+ylabel('Count');
+legendstring={'L-LSE','MF'};
+% legendflex(legendstring,'anchor',{'ne','ne'},'buffer',[0 0],'bufferunit','inches','box','off','xscale',0.5);
+legend(legendstring);
+legend boxoff;
+box off;
+xlim([198 202]);
+ylim([0 30]);
+
+subhandle3 = subplot(1,3,3);
+mincolor = 0; maxcolor = 15;
+Prx = {'10^{-11}' '' '10^{-10}' '' '10^{-9}' '' '10^{-8}'};
+fnoise_list = {'10^{0}' '' '' '' '' '10^{1}'};
+hm1 = heatmapcus(flipud(single(std_est_periodogram_lse*100)),fnoise_list,fliplr(Prx), [],...
+        'ShowAllTicks', true,'TickTexInterpreter','true',...
+        'MinColorValue', mincolor, 'MaxColorValue', maxcolor,'GridLines','-');
+set(gca,'ticklength',[0 0]);
+colorbar;
+xlabel('Linewidth (MHz)')
+ylabel('RX Power (W)')
+
+h1=get(subhandle1,'Position');
+h2=get(subhandle2,'Position');
+h3=get(subhandle3,'Position');
+
+plotx1 = h1(1)-0.05;
+ploty1 = h1(2)+0.05;
+
+plotwidth1 = h1(3)*1.15;
+plotheight1 = h1(4)*0.95;
+% plotpitch = plotwidth + 0.025;
+
+
+plotx2 = h2(1);
+ploty2 = h2(2)+0.05;
+
+plotwidth2 = h2(3)*1.15;
+plotheight2 = h2(4)*0.95;
+% plotpitch = plotwidth + 0.025;
+
+
+plotx3 = h3(1)+0.05;
+ploty3 = h3(2)+0.05;
+
+plotwidth3 = h3(3)*1.05;
+plotheight3 = h3(4)*0.95;
+% plotpitch = plotwidth + 0.025;
+
+set(subhandle1,'Position',[plotx1 ploty1 plotwidth1 plotheight1]);
+set(subhandle2,'Position',[plotx2 ploty2 plotwidth2 plotheight2]);
+set(subhandle3,'Position',[plotx3 ploty3 plotwidth3 plotheight3]);
+
+pos = [3.2 0.5];
+str = 'Accuracy (cm)';
+t=text(subhandle3,pos(1),pos(2), str,'fontname','times',...
+    'fontsize',2*fs,'units','inches','rotation',90);
+
+pos = [-0.75 -0.5];
+str = '(a)';
+t=text(subhandle1,pos(1),pos(2), str,'fontname','times',...
+    'fontsize',2*fs,'units','inches');
+
+pos = [-0.75 -0.5];
+str = '(b)';
+t=text(subhandle2,pos(1),pos(2), str,'fontname','times',...
+    'fontsize',2*fs,'units','inches');
 % 
-% subhandle3 = subplot(1,3,3);
-% mincolor = 0; maxcolor = 15;
-% Prx = {'10^{-11}' '' '10^{-10}' '' '10^{-9}' '' '10^{-8}'};
-% fnoise_list = {'10^{0}' '' '' '' '' '10^{1}'};
-% hm1 = heatmapcus(flipud(single(std_est_periodogram_lse*100)),fnoise_list,fliplr(Prx), [],...
-%         'ShowAllTicks', true,'TickTexInterpreter','true',...
-%         'MinColorValue', mincolor, 'MaxColorValue', maxcolor,'GridLines','-');
-% set(gca,'ticklength',[0 0]);
-% colorbar;
-% xlabel('Linewidth (MHz)')
-% ylabel('RX Power (W)')
-% 
-% h1=get(subhandle1,'Position');
-% h2=get(subhandle2,'Position');
-% h3=get(subhandle3,'Position');
-% 
-% plotx1 = h1(1)-0.05;
-% ploty1 = h1(2)+0.05;
-% 
-% plotwidth1 = h1(3)*1.15;
-% plotheight1 = h1(4)*0.95;
-% % plotpitch = plotwidth + 0.025;
-% 
-% 
-% plotx2 = h2(1);
-% ploty2 = h2(2)+0.05;
-% 
-% plotwidth2 = h2(3)*1.15;
-% plotheight2 = h2(4)*0.95;
-% % plotpitch = plotwidth + 0.025;
-% 
-% 
-% plotx3 = h3(1)+0.05;
-% ploty3 = h3(2)+0.05;
-% 
-% plotwidth3 = h3(3)*1.05;
-% plotheight3 = h3(4)*0.95;
-% % plotpitch = plotwidth + 0.025;
-% 
-% set(subhandle1,'Position',[plotx1 ploty1 plotwidth1 plotheight1]);
-% set(subhandle2,'Position',[plotx2 ploty2 plotwidth2 plotheight2]);
-% set(subhandle3,'Position',[plotx3 ploty3 plotwidth3 plotheight3]);
-% 
-% pos = [3.2 0.5];
-% str = 'Accuracy (cm)';
-% t=text(subhandle3,pos(1),pos(2), str,'fontname','times',...
-%     'fontsize',2*fs,'units','inches','rotation',90);
-% 
-% pos = [-0.75 -0.5];
-% str = '(a)';
-% t=text(subhandle1,pos(1),pos(2), str,'fontname','times',...
-%     'fontsize',2*fs,'units','inches');
-% 
-% pos = [-0.75 -0.5];
-% str = '(b)';
+% pos = [0 1];
+% str = '\sigma_{LLSE}=7cm\n\sigma_{MF}=7cm';
 % t=text(subhandle2,pos(1),pos(2), str,'fontname','times',...
 %     'fontsize',2*fs,'units','inches');
-% % 
-% % pos = [0 1];
-% % str = '\sigma_{LLSE}=7cm\n\sigma_{MF}=7cm';
-% % t=text(subhandle2,pos(1),pos(2), str,'fontname','times',...
-% %     'fontsize',2*fs,'units','inches');
-% 
-% pos = [-0.75 -0.5];
-% str = '(c)';
-% t=text(subhandle3,pos(1),pos(2), str,'fontname','times',...
-%     'fontsize',2*fs,'units','inches');
-% 
-% boxw = 0.1;
-% boxh = 0.25;
-% dim = [0.42 0.55 boxw boxh];
-% str = {'$\sigma_{LLSE}$=3.56cm'};
-% annotation(...
-%     'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
-%     'fontsize',1.5*fs,'horizontalalignment','center','Color',ck,...
-%     'verticalalignment','middle','linestyle','none','Interpreter','latex');
-% 
-% dim = [0.42 0.5 boxw boxh];
-% str = {'$\sigma_{MF}$=37.9cm'};
-% annotation(...
-%     'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
-%     'fontsize',1.5*fs,'horizontalalignment','center','Color',ck,...
-%     'verticalalignment','middle','linestyle','none','Interpreter','latex');
-% 
-% 
-% 
-% 
-% save2pdf('./cleo2018/fig1.pdf',fig1handle,600);
+
+pos = [-0.75 -0.5];
+str = '(c)';
+t=text(subhandle3,pos(1),pos(2), str,'fontname','times',...
+    'fontsize',2*fs,'units','inches');
+
+boxw = 0.1;
+boxh = 0.25;
+dim = [0.42 0.55 boxw boxh];
+str = {'$\sigma_{LLSE}$=3.56cm'};
+annotation(...
+    'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
+    'fontsize',1.5*fs,'horizontalalignment','center','Color',ck,...
+    'verticalalignment','middle','linestyle','none','Interpreter','latex');
+
+dim = [0.42 0.5 boxw boxh];
+str = {'$\sigma_{MF}$=37.9cm'};
+annotation(...
+    'textbox',dim, 'String',str,'FitBoxToText','off','fontname','times',...
+    'fontsize',1.5*fs,'horizontalalignment','center','Color',ck,...
+    'verticalalignment','middle','linestyle','none','Interpreter','latex');
+
+
+
+
+save2pdf('./cleo2018/fig1.pdf',fig1handle,600);
 
 %%
 % sample = load(datapathname);

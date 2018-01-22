@@ -10,6 +10,7 @@ addpath './hex_and_rgb_v2'
 addpath './fig'
 addpath './legendflex'
 addpath './setgetpos_V1.2'
+addpath './heatmaps'
 
 cb = hex2rgb('#1f77b4');
 co = hex2rgb('#ff7f0e');
@@ -25,3 +26,5 @@ textwidth = 7;
 lw = 0.5;
 ms = 3;
 fs = 8;
+m=100;
+cm_viridis=viridis(m);
